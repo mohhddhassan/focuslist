@@ -1,6 +1,6 @@
 # FocusList
 
-A clean, responsive to-do app built with vanilla HTML, CSS, and JavaScript — no frameworks, no backend, no build step.
+A clean, responsive to-do app built with vanilla HTML, CSS, and JavaScript - no frameworks, no backend, no build step.
 
 ## Features
 
@@ -8,7 +8,7 @@ A clean, responsive to-do app built with vanilla HTML, CSS, and JavaScript — n
 - Mark tasks complete/incomplete
 - Set task priority (High / Medium / Low), shown as a colored tag on each task
 - Search tasks by title
-- Filter by status (All / Active / Completed) and by priority — combinable, updating live
+- Filter by status (All / Active / Completed) and by priority - combinable, updating live
 - Live stats: total, completed, pending
 - Data persists across refreshes via `localStorage`
 - Light/dark theme toggle, fully responsive layout
@@ -18,7 +18,7 @@ A clean, responsive to-do app built with vanilla HTML, CSS, and JavaScript — n
 
 ```
 focuslist/
-├── index.html          # Markup only — no inline styles or scripts
+├── index.html          # Markup only - no inline styles or scripts
 ├── css/
 │   └── style.css        # All styling, including light/dark theme tokens
 ├── js/
@@ -29,7 +29,7 @@ focuslist/
 └── package.json
 ```
 
-The split between `logic.js` and `app.js` keeps the testable business logic (filtering, sorting, stats, task creation, HTML escaping) separate from DOM manipulation, so it can run — and be tested — outside a browser.
+The split between `logic.js` and `app.js` keeps the testable business logic (filtering, sorting, stats, task creation, HTML escaping) separate from DOM manipulation, so it can run - and be tested - outside a browser.
 
 ## Run locally
 
@@ -46,7 +46,3 @@ Requires Node.js 18+ (uses the built-in `node:test` runner, no dependencies to i
 ```
 npm test
 ```
-
-## Deploy
-
-Enable GitHub Pages on this repo (Settings → Pages → deploy from `main` branch, root folder) to get a live link.
