@@ -3,6 +3,42 @@
  * All non-DOM logic lives in js/logic.js (loaded before this file) and is
  * exposed here via the FocusListLogic global.
  */
+function setupCustomSelect(select) {
+  
+  if (!select) return;
+
+  const trigger = select.querySelector(".custom-select-trigger");
+  const valueElement = select.querySelector(".custom-select-value");
+  const options = select.querySelectorAll('[role="option"]');
+  const hiddenInput = select.querySelector('input[type="hidden"]');
+
+  if (!trigger || !valueElement || !hiddenInput) return;
+
+  trigger.addEventListener("click", function () {
+    const isOpen = select.classList.toggle("open");
+    trigger.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  options.forEach(function (option) {
+    option.addEventListener("click", function () {
+      const value = option.dataset.value;
+
+      valueElement.textContent = option.textContent.trim();
+      hiddenInput.value = value;
+
+      options.forEach(function (item) {
+        item.setAttribute("aria-selected", "false");
+      });
+
+      option.setAttribute("aria-selected", "true");
+
+      select.classList.remove("open");
+      trigger.setAttribute("aria-expanded", "false");
+
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  });
+}
 (function () {
   "use strict";
 
@@ -30,6 +66,9 @@
     statPending: document.getElementById("statPending"),
     themeToggle: document.getElementById("themeToggle"),
   };
+
+  setupCustomSelect(el.newTaskPriority);
+  setupCustomSelect(el.priorityFilter);
 
   function loadTasks() {
     try {
@@ -101,12 +140,37 @@
         li.innerHTML =
           '<div class="edit-row">' +
             '<input type="text" class="edit-input" value="' + Logic.escapeHtml(task.title) + '" maxlength="200" aria-label="Edit task title">' +
-            '<select class="edit-priority" aria-label="Edit task priority">' +
-              '<option value="high" ' + (task.priority === "high" ? "selected" : "") + '>High</option>' +
-              '<option value="medium" ' + (task.priority === "medium" ? "selected" : "") + '>Medium</option>' +
-              '<option value="low" ' + (task.priority === "low" ? "selected" : "") + '>Low</option>' +
-            '</select>' +
-            '<button type="button" class="btn btn-primary save-edit">Save</button>' +
+          '<div class="custom-select edit-priority">' +
+            '<button type="button" class="custom-select-trigger" ' +
+              'aria-haspopup="listbox" aria-expanded="false" ' +
+              'aria-label="Edit task priority">' +
+              '<span class="custom-select-value">' +
+                Logic.priorityLabel(task.priority) +
+              '</span>' +
+              '<span class="custom-select-arrow">⌄</span>' +
+            '</button>' +
+
+            '<ul class="custom-select-options" role="listbox">' +
+
+              '<li role="option" data-value="high" ' +
+                'aria-selected="' + (task.priority === "high" ? "true" : "false") + '">' +
+                'High' +
+              '</li>' +
+
+              '<li role="option" data-value="medium" ' +
+                'aria-selected="' + (task.priority === "medium" ? "true" : "false") + '">' +
+                'Medium' +
+              '</li>' +
+
+              '<li role="option" data-value="low" ' +
+                'aria-selected="' + (task.priority === "low" ? "true" : "false") + '">' +
+                'Low' +
+              '</li>' +
+
+            '</ul>' +
+
+            '<input type="hidden" value="' + task.priority + '">' +
+          '</div>' +            '<button type="button" class="btn btn-primary save-edit">Save</button>' +
             '<button type="button" class="icon-btn cancel-edit" aria-label="Cancel edit">\u2715</button>' +
           '</div>';
       } else {
@@ -125,6 +189,11 @@
           '</div>';
       }
       el.taskList.appendChild(li);
+      const editPriority = li.querySelector(".edit-priority");
+
+      if (editPriority) {
+        setupCustomSelect(editPriority);
+      }
     });
 
     updateStats();
@@ -179,7 +248,13 @@
 
   el.addForm.addEventListener("submit", function (e) {
     e.preventDefault();
-    addTask(el.newTaskInput.value, el.newTaskPriority.value);
+
+    const priority = el.newTaskPriority.querySelector(
+      'input[type="hidden"]'
+    ).value;
+
+    addTask(el.newTaskInput.value, priority);
+
     el.newTaskInput.value = "";
     el.newTaskInput.focus();
   });
@@ -205,7 +280,10 @@
   });
 
   el.priorityFilter.addEventListener("change", function () {
-    state.priority = el.priorityFilter.value;
+    state.priority = el.priorityFilter.querySelector(
+      'input[type="hidden"]'
+    ).value;
+
     render();
   });
 
@@ -219,7 +297,11 @@
     if (e.target.closest(".save-edit")) {
       const input = li.querySelector(".edit-input");
       const prioritySelect = li.querySelector(".edit-priority");
-      saveEdit(id, input.value, prioritySelect.value);
+      const priority = prioritySelect.querySelector(
+        'input[type="hidden"]'
+      ).value;
+
+      saveEdit(id, input.value, priority);
       return;
     }
     if (e.target.closest(".cancel-edit")) { cancelEdit(); return; }
@@ -238,7 +320,11 @@
       e.preventDefault();
       const li = e.target.closest(".task");
       const prioritySelect = li.querySelector(".edit-priority");
-      saveEdit(li.dataset.id, e.target.value, prioritySelect.value);
+      const priority = prioritySelect.querySelector(
+        'input[type="hidden"]'
+      ).value;
+
+      saveEdit(li.dataset.id, e.target.value, priority);
     }
     if (e.target.classList.contains("edit-input") && e.key === "Escape") {
       cancelEdit();
@@ -246,8 +332,22 @@
   });
 
   el.themeToggle.addEventListener("click", toggleTheme);
+  document.addEventListener("click", function (e) {
+  document.querySelectorAll(".custom-select.open").forEach(function (select) {
+    if (!select.contains(e.target)) {
+      select.classList.remove("open");
+
+      const trigger = select.querySelector(".custom-select-trigger");
+
+      if (trigger) {
+        trigger.setAttribute("aria-expanded", "false");
+      }
+    }
+  });
+  });
 
   loadTheme();
   tasks = loadTasks();
   render();
 })();
+

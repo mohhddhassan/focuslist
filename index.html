@@ -27,11 +27,44 @@
 
   <form class="add-form" id="addForm">
     <input type="text" id="newTaskInput" placeholder="Add a task…" maxlength="200" aria-label="New task title" autocomplete="off">
-    <select id="newTaskPriority" aria-label="Priority for new task">
-      <option value="medium" selected>Medium</option>
-      <option value="high">High</option>
-      <option value="low">Low</option>
-    </select>
+  <div class="custom-select" id="newTaskPriority">
+    <button
+      type="button"
+      class="custom-select-trigger"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-label="Priority for new task"
+    >
+      <span class="custom-select-value">Medium</span>
+      <span class="custom-select-arrow">⌄</span>
+    </button>
+
+    <ul class="custom-select-options" role="listbox">
+      <li
+        role="option"
+        data-value="medium"
+        aria-selected="true"
+      >
+        Medium
+      </li>
+      <li
+        role="option"
+        data-value="high"
+        aria-selected="false"
+      >
+        High
+      </li>
+      <li
+        role="option"
+        data-value="low"
+        aria-selected="false"
+      >
+        Low
+      </li>
+    </ul>
+
+    <input type="hidden" value="medium">
+  </div>
     <button type="submit" class="btn btn-primary" id="addBtn">Add task</button>
   </form>
 
@@ -42,12 +75,51 @@
       <button type="button" data-value="active">Active</button>
       <button type="button" data-value="completed">Completed</button>
     </div>
-    <select id="priorityFilter" class="priority-filter" aria-label="Filter by priority">
-      <option value="all">Any priority</option>
-      <option value="high">High</option>
-      <option value="medium">Medium</option>
-      <option value="low">Low</option>
-    </select>
+  <div class="custom-select priority-filter" id="priorityFilter">
+    <button
+      type="button"
+      class="custom-select-trigger"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-label="Filter by priority"
+    >
+      <span class="custom-select-value">Any priority</span>
+      <span class="custom-select-arrow">⌄</span>
+    </button>
+
+    <ul class="custom-select-options" role="listbox">
+      <li
+        role="option"
+        data-value="all"
+        aria-selected="true"
+      >
+        Any priority
+      </li>
+      <li
+        role="option"
+        data-value="high"
+        aria-selected="false"
+      >
+        High
+      </li>
+      <li
+        role="option"
+        data-value="medium"
+        aria-selected="false"
+      >
+        Medium
+      </li>
+      <li
+        role="option"
+        data-value="low"
+        aria-selected="false"
+      >
+        Low
+      </li>
+    </ul>
+
+    <input type="hidden" value="all">
+  </div>
   </div>
 
   <div class="list-section">
