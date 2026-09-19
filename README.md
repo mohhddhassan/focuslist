@@ -1,6 +1,6 @@
 # FocusList
 
-A clean, responsive to-do app built with vanilla HTML, CSS, and JavaScript — no frameworks, no backend.
+A clean, responsive to-do app built with vanilla HTML, CSS, and JavaScript - no frameworks, no backend.
 
 ## Features
 - Add, edit, and delete tasks
@@ -13,7 +13,7 @@ A clean, responsive to-do app built with vanilla HTML, CSS, and JavaScript — n
 - Light/dark theme toggle, fully responsive
 
 ## Run locally
-Just open `index.html` in any browser — no build step or server required.
+Just open `index.html` in any browser - no build step or server required.
 
 ## Deploy
 Enable GitHub Pages on this repo (Settings → Pages → deploy from `main` branch, root folder) to get a live link.
