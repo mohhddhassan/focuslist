@@ -1,0 +1,17 @@
+{
+  "name": "focuslist",
+  "version": "1.0.0",
+  "description": "A clean, responsive frontend-only to-do app with task priorities, search, filtering, live stats, and localStorage persistence.",
+  "private": true,
+  "main": "index.html",
+  "scripts": {
+    "test": "node --test tests/**/*.test.js"
+  },
+  "keywords": [
+    "todo",
+    "task-manager",
+    "vanilla-js",
+    "frontend"
+  ],
+  "license": "MIT"
+}
