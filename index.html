@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FocusList</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --ink: #1c1c1f;
+    --muted: #6b6b70;
+    --faint: #9a9a9f;
+    --line: #e3e3e0;
+    --line-strong: #d2d2ce;
+    --accent: #1c1c1f;
+    --accent-contrast: #ffffff;
+    --high: #9b3b3b;
+    --high-bg: #f7ebe9;
+    --medium: #8a6d1f;
+    --medium-bg: #f7f1e2;
+    --low: #3d6b52;
+    --low-bg: #eaf1ec;
+    --done-line: #c7c7c3;
+    --focus-ring: #1c1c1f;
+    --radius: 10px;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17171a;
+      --surface: #1f1f22;
+      --ink: #f2f2ef;
+      --muted: #a4a4a8;
+      --faint: #75757a;
+      --line: #303033;
+      --line-strong: #3c3c40;
+      --accent: #f2f2ef;
+      --accent-contrast: #17171a;
+      --high: #e0847f;
+      --high-bg: #3a2422;
+      --medium: #d9bb6c;
+      --medium-bg: #363021;
+      --low: #8fc7a8;
+      --low-bg: #223028;
+      --done-line: #47474a;
+      --focus-ring: #f2f2ef;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17171a;
+    --surface: #1f1f22;
+    --ink: #f2f2ef;
+    --muted: #a4a4a8;
+    --faint: #75757a;
+    --line: #303033;
+    --line-strong: #3c3c40;
+    --accent: #f2f2ef;
+    --accent-contrast: #17171a;
+    --high: #e0847f;
+    --high-bg: #3a2422;
+    --medium: #d9bb6c;
+    --medium-bg: #363021;
+    --low: #8fc7a8;
+    --low-bg: #223028;
+    --done-line: #47474a;
+    --focus-ring: #f2f2ef;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    padding: 48px 20px 80px;
+  }
+  .wrap {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+  .brand h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 30px;
+    letter-spacing: -0.01em;
+    margin: 0 0 4px;
+  }
+  .brand p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .theme-toggle {
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--muted);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .theme-toggle:hover { border-color: var(--line-strong); color: var(--ink); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+  .stats {
+    display: flex;
+    gap: 28px;
+    padding: 18px 0 22px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 22px;
+  }
+  .stat .num {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .stat .label {
+    color: var(--muted);
+    font-size: 12.5px;
+    margin-top: 4px;
+  }
+
+  form.add-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .add-form input[type="text"] {
+    flex: 1;
+    min-width: 0;
+  }
+  select, input[type="text"], input[type="search"] {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    padding: 11px 13px;
+  }
+  select:focus-visible, input:focus-visible, button:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 1px;
+  }
+  .add-form select {
+    width: 122px;
+    flex-shrink: 0;
+  }
+  .btn {
+    border: none;
+    border-radius: var(--radius);
+    padding: 11px 18px;
+    font-size: 14.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--sans);
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+  .controls input[type="search"] {
+    flex: 1;
+    min-width: 140px;
+  }
+  .filter-group {
+    display: flex;
+    gap: 2px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 3px;
+  }
+  .filter-group button {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+  }
+  .filter-group button.active {
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+  .priority-filter { width: 130px; }
+
+  .list-section { margin-top: 22px; }
+  ul.tasks { list-style: none; margin: 0; padding: 0; }
+  .task {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 2px;
+    border-bottom: 1px solid var(--line);
+  }
+  .task:first-child { border-top: 1px solid var(--line); }
+
+  .check {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 19px;
+    height: 19px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 50%;
+    margin-top: 1px;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+    background: var(--surface);
+  }
+  .check:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .check:checked::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 4px;
+    height: 9px;
+    border: solid var(--accent-contrast);
+    border-width: 0 1.5px 1.5px 0;
+    transform: rotate(45deg);
+  }
+  .check:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+  .task-body { flex: 1; min-width: 0; }
+  .task-title {
+    font-size: 15px;
+    line-height: 1.4;
+    word-break: break-word;
+    cursor: pointer;
+  }
+  .task.done .task-title {
+    color: var(--faint);
+    text-decoration: line-through;
+    text-decoration-color: var(--done-line);
+  }
+  .task-meta {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .priority-tag {
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .priority-tag .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .p-high { color: var(--high); background: var(--high-bg); }
+  .p-high .dot { background: var(--high); }
+  .p-medium { color: var(--medium); background: var(--medium-bg); }
+  .p-medium .dot { background: var(--medium); }
+  .p-low { color: var(--low); background: var(--low-bg); }
+  .p-low .dot { background: var(--low); }
+
+  .task-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .icon-btn {
+    border: none;
+    background: transparent;
+    color: var(--faint);
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .icon-btn:hover { background: var(--line); color: var(--ink); }
+
+  .edit-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  .edit-row input[type="text"] { flex: 1; }
+
+  .empty {
+    text-align: center;
+    padding: 48px 12px;
+    color: var(--muted);
+  }
+  .empty .glyph { font-family: var(--serif); font-size: 28px; margin-bottom: 8px; color: var(--faint); }
+  .empty p { margin: 0; font-size: 14px; }
+
+  footer.hint {
+    margin-top: 26px;
+    color: var(--faint);
+    font-size: 12.5px;
+    text-align: center;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 32px 14px 60px; }
+    .add-form { flex-wrap: wrap; }
+    .add-form select { width: 108px; }
+    .add-form input[type="text"] { flex-basis: 100%; }
+    .stats { gap: 20px; }
+    .priority-filter { width: 108px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1>FocusList</h1>
+      <p>One list, kept in order.</p>
+    </div>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">◐</button>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="num" id="statTotal">0</div><div class="label">Total</div></div>
+    <div class="stat"><div class="num" id="statCompleted">0</div><div class="label">Completed</div></div>
+    <div class="stat"><div class="num" id="statPending">0</div><div class="label">Pending</div></div>
+  </div>
+
+  <form class="add-form" id="addForm">
+    <input type="text" id="newTaskInput" placeholder="Add a task…" maxlength="200" aria-label="New task title" autocomplete="off">
+    <select id="newTaskPriority" aria-label="Priority for new task">
+      <option value="medium" selected>Medium</option>
+      <option value="high">High</option>
+      <option value="low">Low</option>
+    </select>
+    <button type="submit" class="btn btn-primary" id="addBtn">Add task</button>
+  </form>
+
+  <div class="controls">
+    <input type="search" id="searchInput" placeholder="Search tasks…" aria-label="Search tasks by title">
+    <div class="filter-group" id="statusFilter" role="group" aria-label="Filter by status">
+      <button type="button" data-value="all" class="active">All</button>
+      <button type="button" data-value="active">Active</button>
+      <button type="button" data-value="completed">Completed</button>
+    </div>
+    <select id="priorityFilter" class="priority-filter" aria-label="Filter by priority">
+      <option value="all">Any priority</option>
+      <option value="high">High</option>
+      <option value="medium">Medium</option>
+      <option value="low">Low</option>
+    </select>
+  </div>
+
+  <div class="list-section">
+    <ul class="tasks" id="taskList"></ul>
+    <div class="empty" id="emptyState" hidden>
+      <div class="glyph">—</div>
+      <p id="emptyMessage">No tasks yet. Add your first one above.</p>
+    </div>
+  </div>
+
+  <footer class="hint">Tasks are saved to this browser only.</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const STORAGE_KEY = "focuslist.tasks.v1";
+  const THEME_KEY = "focuslist.theme.v1";
+
+  /** @type {{id:string, title:string, priority:'high'|'medium'|'low', completed:boolean, createdAt:number}[]} */
+  let tasks = [];
+  let state = { status: "all", priority: "all", search: "", editingId: null };
+
+  const el = {
+    addForm: document.getElementById("addForm"),
+    newTaskInput: document.getElementById("newTaskInput"),
+    newTaskPriority: document.getElementById("newTaskPriority"),
+    addBtn: document.getElementById("addBtn"),
+    searchInput: document.getElementById("searchInput"),
+    statusFilter: document.getElementById("statusFilter"),
+    priorityFilter: document.getElementById("priorityFilter"),
+    taskList: document.getElementById("taskList"),
+    emptyState: document.getElementById("emptyState"),
+    emptyMessage: document.getElementById("emptyMessage"),
+    statTotal: document.getElementById("statTotal"),
+    statCompleted: document.getElementById("statCompleted"),
+    statPending: document.getElementById("statPending"),
+    themeToggle: document.getElementById("themeToggle"),
+  };
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function loadTasks() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter(t => t && typeof t.id === "string" && typeof t.title === "string");
+    } catch (e) {
+      console.error("FocusList: failed to load tasks", e);
+      return [];
+    }
+  }
+
+  function saveTasks() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    } catch (e) {
+      console.error("FocusList: failed to save tasks", e);
+    }
+  }
+
+  function loadTheme() {
+    try {
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === "dark" || saved === "light") {
+        document.documentElement.setAttribute("data-theme", saved);
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute("data-theme");
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const currentlyDark = current === "dark" || (!current && prefersDark);
+    const next = currentlyDark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem(THEME_KEY, next); } catch (e) { /* ignore */ }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function priorityLabel(p) {
+    return p === "high" ? "High" : p === "low" ? "Low" : "Medium";
+  }
+
+  function getFilteredTasks() {
+    const q = state.search.trim().toLowerCase();
+    return tasks.filter(t => {
+      if (state.status === "active" && t.completed) return false;
+      if (state.status === "completed" && !t.completed) return false;
+      if (state.priority !== "all" && t.priority !== state.priority) return false;
+      if (q && !t.title.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }
+
+  function updateStats() {
+    const total = tasks.length;
+    const completed = tasks.filter(t => t.completed).length;
+    el.statTotal.textContent = total;
+    el.statCompleted.textContent = completed;
+    el.statPending.textContent = total - completed;
+  }
+
+  function render() {
+    const filtered = getFilteredTasks();
+    el.taskList.innerHTML = "";
+
+    if (filtered.length === 0) {
+      el.emptyState.hidden = false;
+      if (tasks.length === 0) {
+        el.emptyMessage.textContent = "No tasks yet. Add your first one above.";
+      } else {
+        el.emptyMessage.textContent = "No tasks match your search or filters.";
+      }
+    } else {
+      el.emptyState.hidden = true;
+    }
+
+    filtered
+      .slice()
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .forEach(task => {
+        const li = document.createElement("li");
+        li.className = "task" + (task.completed ? " done" : "");
+        li.dataset.id = task.id;
+
+        if (state.editingId === task.id) {
+          li.innerHTML = `
+            <div class="edit-row">
+              <input type="text" class="edit-input" value="${escapeHtml(task.title)}" maxlength="200" aria-label="Edit task title">
+              <select class="edit-priority" aria-label="Edit task priority">
+                <option value="high" ${task.priority === "high" ? "selected" : ""}>High</option>
+                <option value="medium" ${task.priority === "medium" ? "selected" : ""}>Medium</option>
+                <option value="low" ${task.priority === "low" ? "selected" : ""}>Low</option>
+              </select>
+              <button type="button" class="btn btn-primary save-edit">Save</button>
+              <button type="button" class="icon-btn cancel-edit" aria-label="Cancel edit">✕</button>
+            </div>
+          `;
+        } else {
+          li.innerHTML = `
+            <input type="checkbox" class="check" ${task.completed ? "checked" : ""} aria-label="Mark '${escapeHtml(task.title)}' as ${task.completed ? "active" : "completed"}">
+            <div class="task-body">
+              <div class="task-title">${escapeHtml(task.title)}</div>
+              <div class="task-meta">
+                <span class="priority-tag p-${task.priority}"><span class="dot"></span>${priorityLabel(task.priority)}</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <button type="button" class="icon-btn edit-btn" aria-label="Edit task">✎</button>
+              <button type="button" class="icon-btn delete-btn" aria-label="Delete task">🗑</button>
+            </div>
+          `;
+        }
+        el.taskList.appendChild(li);
+      });
+
+    updateStats();
+  }
+
+  function addTask(title, priority) {
+    const trimmed = title.trim();
+    if (!trimmed) return;
+    tasks.push({
+      id: uid(),
+      title: trimmed,
+      priority: priority,
+      completed: false,
+      createdAt: Date.now(),
+    });
+    saveTasks();
+    render();
+  }
+
+  function deleteTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    saveTasks();
+    render();
+  }
+
+  function toggleComplete(id) {
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+      task.completed = !task.completed;
+      saveTasks();
+      render();
+    }
+  }
+
+  function startEdit(id) {
+    state.editingId = id;
+    render();
+    const input = el.taskList.querySelector(".edit-input");
+    if (input) { input.focus(); input.select(); }
+  }
+
+  function saveEdit(id, newTitle, newPriority) {
+    const trimmed = newTitle.trim();
+    if (!trimmed) { state.editingId = null; render(); return; }
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+      task.title = trimmed;
+      task.priority = newPriority;
+    }
+    state.editingId = null;
+    saveTasks();
+    render();
+  }
+
+  function cancelEdit() {
+    state.editingId = null;
+    render();
+  }
+
+  // Event: add task
+  el.addForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    addTask(el.newTaskInput.value, el.newTaskPriority.value);
+    el.newTaskInput.value = "";
+    el.newTaskInput.focus();
+  });
+
+  el.newTaskInput.addEventListener("input", function () {
+    el.addBtn.disabled = el.newTaskInput.value.trim().length === 0;
+  });
+  el.addBtn.disabled = true;
+
+  // Event: search
+  el.searchInput.addEventListener("input", function () {
+    state.search = el.searchInput.value;
+    render();
+  });
+
+  // Event: status filter
+  el.statusFilter.addEventListener("click", function (e) {
+    const btn = e.target.closest("button[data-value]");
+    if (!btn) return;
+    state.status = btn.dataset.value;
+    Array.from(el.statusFilter.children).forEach(b => b.classList.toggle("active", b === btn));
+    render();
+  });
+
+  // Event: priority filter
+  el.priorityFilter.addEventListener("change", function () {
+    state.priority = el.priorityFilter.value;
+    render();
+  });
+
+  // Event delegation: task list interactions
+  el.taskList.addEventListener("click", function (e) {
+    const li = e.target.closest(".task");
+    if (!li) return;
+    const id = li.dataset.id;
+
+    if (e.target.closest(".delete-btn")) {
+      deleteTask(id);
+      return;
+    }
+    if (e.target.closest(".edit-btn")) {
+      startEdit(id);
+      return;
+    }
+    if (e.target.closest(".save-edit")) {
+      const input = li.querySelector(".edit-input");
+      const prioritySelect = li.querySelector(".edit-priority");
+      saveEdit(id, input.value, prioritySelect.value);
+      return;
+    }
+    if (e.target.closest(".cancel-edit")) {
+      cancelEdit();
+      return;
+    }
+    if (e.target.classList.contains("task-title")) {
+      toggleComplete(id);
+      return;
+    }
+  });
+
+  el.taskList.addEventListener("change", function (e) {
+    if (e.target.classList.contains("check")) {
+      const li = e.target.closest(".task");
+      toggleComplete(li.dataset.id);
+    }
+  });
+
+  el.taskList.addEventListener("keydown", function (e) {
+    if (e.target.classList.contains("edit-input") && e.key === "Enter") {
+      e.preventDefault();
+      const li = e.target.closest(".task");
+      const prioritySelect = li.querySelector(".edit-priority");
+      saveEdit(li.dataset.id, e.target.value, prioritySelect.value);
+    }
+    if (e.target.classList.contains("edit-input") && e.key === "Escape") {
+      cancelEdit();
+    }
+  });
+
+  el.themeToggle.addEventListener("click", toggleTheme);
+
+  // Init
+  loadTheme();
+  tasks = loadTasks();
+  render();
+})();
+</script>
+</body>
+</html>
